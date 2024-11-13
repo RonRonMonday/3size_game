@@ -22,21 +22,25 @@ def card_use(c_list,yamafuda,using):
 async def main():
     pygame.init() #初期化
 
+    #colors
     black = (0,0,0)
     red = (255,0,0)
     green = (0,255,0)
     blue = (0,0,255)
     white = (255,255,255)
-    BG = (50,110,80)
+    BG = (50,110,80) #background
+
     WIDTH = 800
     HEIGHT = 600
     FONTSIZE_TITLE = 50
     FONTSIZE_TOP = 30
     FONTSIZE_DEF = 20
     FONT_FILE = "AkazukiPOP.otf"
+
     font_title = pygame.font.Font(FONT_FILE, FONTSIZE_TITLE)
     font_top = pygame.font.Font(FONT_FILE, FONTSIZE_TOP)
     font_def = pygame.font.Font(FONT_FILE, FONTSIZE_DEF)
+
     clock = pygame.time.Clock()
 
     
@@ -239,44 +243,23 @@ async def main():
     player_names = d["players"]
     player_color = []
     for t in d["colors"]:
-
         player_color.append(tuple(t))
-
     for key,value in d["3size_data"].items():
         chara.append(key)
         data[key] = value
         data[key]["which"] = random.choice(["B","W","H"])
             
-
-
-
-
-    #player_names = []
-    #player_color = []
-
-
-
-
-
     c_list = copy.deepcopy(chara)
 
     using = []
-    yamafuda = list(range(len(c_list)))
-            
+    yamafuda = list(range(len(c_list))) #山札
 
-
-
-    
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("3size_game")
     allgame_running = True
-    #player_names = ["キキョウ","ほわぁ","黎"]
-    #player_color = [(166,100,160),(248,181,0),(216,28,47)]
-    player_wins = [0,0,0]
+    player_wins = [0,0,0] #playerの勝利数
 
     while allgame_running:
-
-        
 
         using = []
         running1 = True
