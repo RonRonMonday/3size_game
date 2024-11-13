@@ -579,5 +579,5 @@ async def main():
 
 if __name__ == "__main__":
 
-    #print("HPPPPPPPPPPPPPPPPPPPPPPPPP")
+    print("asyncio.run(main())")
     asyncio.run(main())
