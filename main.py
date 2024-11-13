@@ -1,10 +1,7 @@
 import pygame
 from pygame.locals import *
-import sys
-import csv
 import random
 import copy
-import json
 import asyncio
 
 
@@ -23,6 +20,7 @@ def card_use(c_list,yamafuda,using):
 
 
 async def main():
+    pygame.init() #初期化
 
     black = (0,0,0)
     red = (255,0,0)
@@ -35,9 +33,13 @@ async def main():
     FONTSIZE_TITLE = 50
     FONTSIZE_TOP = 30
     FONTSIZE_DEF = 20
+    FONT_FILE = "AkazukiPOP.otf"
+    font_title = pygame.font.Font(FONT_FILE, FONTSIZE_TITLE)
+    font_top = pygame.font.Font(FONT_FILE, FONTSIZE_TOP)
+    font_def = pygame.font.Font(FONT_FILE, FONTSIZE_DEF)
     clock = pygame.time.Clock()
 
-    fontname1 = '07あかずきんポップheavy'
+    
     chara = []
     data = {}
     
@@ -264,7 +266,7 @@ async def main():
 
 
 
-    pygame.init() #初期化
+    
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("3size_game")
     allgame_running = True
@@ -284,22 +286,22 @@ async def main():
             
             #赤(255,0,0)
             screen.fill(BG)
-            font1 = pygame.font.SysFont(fontname1, FONTSIZE_TITLE)
-            text1 = font1.render("3サイズブラックジャック", True, black)
+            
+            text1 = font_title.render("3サイズブラックジャック", True, black)
             text_rect = text1.get_rect(center=(WIDTH*(1/2), HEIGHT*(1/4)))
             screen.blit(text1, text_rect)
-            font1 = pygame.font.SysFont(fontname1, FONTSIZE_TITLE)
-            text1 = font1.render("Enterで次のゲームスタート", True, black)
+            
+            text1 = font_title.render("Enterで次のゲームスタート", True, black)
             text_rect = text1.get_rect(center=(WIDTH*(1/2), HEIGHT*(2/4)))
             screen.blit(text1, text_rect)
-            text1 = font1.render("現在の勝利点", True, black)
+            text1 = font_title.render("現在の勝利点", True, black)
             text_rect = text1.get_rect(center=(WIDTH*(1/2), HEIGHT*(8/12)))
             screen.blit(text1, text_rect)
             for i in range(3):
-                text1 = font1.render(f"{player_names[i]}", True, player_color[i])
+                text1 = font_title.render(f"{player_names[i]}", True, player_color[i])
                 text_rect = text1.get_rect(center=(WIDTH*((1+i)/4), HEIGHT*(10/12)))
                 screen.blit(text1, text_rect)
-                text1 = font1.render(f"{player_wins[i]}勝", True, player_color[i])
+                text1 = font_title.render(f"{player_wins[i]}勝", True, player_color[i])
                 text_rect = text1.get_rect(center=(WIDTH*((1+i)/4), HEIGHT*(11/12)))
                 screen.blit(text1, text_rect)
 
@@ -307,16 +309,7 @@ async def main():
             
             # pygame.display.update()
             for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
-
                 if event.type == KEYDOWN:
-
-                    if event.key == K_ESCAPE:   
-                        running2 = False
-                        pygame.quit()
-                        sys.exit()
                     if event.key == K_RETURN:
                         running1 = False
 
@@ -334,7 +327,7 @@ async def main():
                 cards[p].append([c_list[n],bwh])
                 score[p].append(data[c_list[n]][bwh])
         
-        targetscore = 400 + random.randrange(200)
+        targetscore = target_min + random.randrange(target_max-target_min)
 
         running2 = True
 
@@ -352,59 +345,54 @@ async def main():
             pygame.draw.rect(screen, white, (WIDTH*(1/36+player*(1/3)),HEIGHT*(7/36),WIDTH*(10/36),HEIGHT*(20/36)), 5)
             #赤(255,0,0)
             
-            font = pygame.font.SysFont(fontname1, FONTSIZE_TOP)
-            text = font.render(f"{targetscore}に近づけろ！超えたらアウト！", True, black)
+            
+            text = font_top.render(f"{targetscore}に近づけろ！超えたらアウト！", True, black)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(1/18)))
             screen.blit(text, text_rect)
             if change_power[player] == 1:
-                text = font.render(f"Fでカード追加、Jで追加終了、CでBWHチェンジ", True, black)
+                text = font_top.render(f"Fでカード追加、Jで追加終了、CでBWHチェンジ", True, black)
             else:
-                text = font.render(f"Fでカード追加、Jで追加終了", True, black)
+                text = font_top.render(f"Fでカード追加、Jで追加終了", True, black)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(2/18)))
             screen.blit(text, text_rect)
-            text = font.render(f"山札:{len(yamafuda)}枚", True, black)
+            text = font_top.render(f"山札:{len(yamafuda)}枚", True, black)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(16/18)))
             screen.blit(text, text_rect)
 
 
-            text = font.render(f"{player_names[player]}の番です", True, player_color[player])
+            text = font_top.render(f"{player_names[player]}の番です", True, player_color[player])
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(3/18)))
             screen.blit(text, text_rect)
 
 
 
 
-            font = pygame.font.SysFont(fontname1, FONTSIZE_DEF)
+            
             for p in range(3):
-                text = font.render(f"{player_names[p]} {player_wins[p]}勝", True, player_color[p])
+                text = font_def.render(f"{player_names[p]} {player_wins[p]}勝", True, player_color[p])
                 text_rect = text.get_rect(center=(WIDTH*(1/6+p/3), HEIGHT*(4/18)))
                 screen.blit(text, text_rect)
                 for i in range(len(cards[p])):
-                    text = font.render(f"{i+1}.{cards[p][i][0]}", True, black)
+                    text = font_def.render(f"{i+1}.{cards[p][i][0]}", True, black)
                     screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                    text = font.render(f"{cards[p][i][1]}", True, black)
+                    text = font_def.render(f"{cards[p][i][1]}", True, black)
                     screen.blit(text, (WIDTH*(11/48+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                     if i<= 1:
-                        text = font.render(f"{score[p][i]}", True, black)
+                        text = font_def.render(f"{score[p][i]}", True, black)
                         screen.blit(text, (WIDTH*(25/96+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                 if player_skip[p] == 1:
-                    text = font.render("追加終了", True, black)
+                    text = font_def.render("追加終了", True, black)
                     screen.blit(text, (WIDTH*(4/24+p/3),HEIGHT*(1/4)+(i+1)*FONTSIZE_DEF))
                 if change_power[p] == 1:
-                    text = font.render("CP所持", True, black)
+                    text = font_def.render("CP所持", True, black)
                     screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+(i+1)*FONTSIZE_DEF))
     
             pygame.display.update()
 
             for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
 
                 if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:   
-                        pygame.quit()
-                        sys.exit()
+
                     if event.key == K_f:
                         (n,yamafuda,using) = card_use(c_list,yamafuda,using)
                         bwh = data[chara[n]]["which"]
@@ -436,50 +424,46 @@ async def main():
                 pygame.draw.rect(screen, white, (WIDTH*(1/36+player*(1/3)),HEIGHT*(7/36),WIDTH*(10/36),HEIGHT*(20/36)), 5)
                 
                 
-                font = pygame.font.SysFont(fontname1, FONTSIZE_TOP)
-                text = font.render(f"{targetscore}に近づけろ！超えたらアウト！", True, black)
+
+                text = font_top.render(f"{targetscore}に近づけろ！超えたらアウト！", True, black)
                 text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(1/18)))
                 screen.blit(text, text_rect)
-                font = pygame.font.SysFont(fontname1, FONTSIZE_DEF)
-                text = font.render(f"変えるキャラを↑↓で選ぶ", True, black)
+
+                text = font_def.render(f"変えるキャラを↑↓で選ぶ", True, black)
                 text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(2/18)))
                 screen.blit(text, text_rect)
-                text = font.render(f"BWHのいずれかでチェンジ,Cでキャンセル", True, black)
+                text = font_def.render(f"BWHのいずれかでチェンジ,Cでキャンセル", True, black)
                 text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(3/18)))
                 screen.blit(text, text_rect)
-                font = pygame.font.SysFont(fontname1, FONTSIZE_DEF)
+
                 for p in range(3):
-                    text = font.render(f"{player_names[p]} {player_wins[p]}勝", True, player_color[p])
+                    text = font_def.render(f"{player_names[p]} {player_wins[p]}勝", True, player_color[p])
                     text_rect = text.get_rect(center=(WIDTH*(1/6+p/3), HEIGHT*(4/18)))
                     screen.blit(text, text_rect)
 
                     for i in range(len(cards[p])):
                         if selecting == i and p == player:
-                            text = font.render(f"→{i+1}.{cards[p][i][0]}", True, black)
+                            text = font_def.render(f"→{i+1}.{cards[p][i][0]}", True, black)
                         else:
-                            text = font.render(f"{i+1}.{cards[p][i][0]}", True, black)
+                            text = font_def.render(f"{i+1}.{cards[p][i][0]}", True, black)
                         screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                        text = font.render(f"{cards[p][i][1]}", True, black)
+                        text = font_def.render(f"{cards[p][i][1]}", True, black)
                         screen.blit(text, (WIDTH*(11/48+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                         if i<= 1:
-                            text = font.render(f"{score[p][i]}", True, black)
+                            text = font_def.render(f"{score[p][i]}", True, black)
                             screen.blit(text, (WIDTH*(25/96+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                     if player_skip[p] == 1:
-                        text = font.render("追加終了", True, black)
+                        text = font_def.render("追加終了", True, black)
                         screen.blit(text, (WIDTH*(4/24+p/3),HEIGHT*(1/4)+(i+1)*FONTSIZE_DEF))
                     if change_power[p] == 1:
-                        text = font.render("CP所持", True, black)
+                        text = font_def.render("CP所持", True, black)
                         screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+(i+1)*FONTSIZE_DEF))
                 pygame.display.update()
                 for event in pygame.event.get():
-                    if event.type == QUIT:
-                        pygame.quit()
-                        sys.exit()
+
 
                     if event.type == KEYDOWN:
-                        if event.key == K_ESCAPE:   
-                            pygame.quit()
-                            sys.exit()
+
                         if event.key == K_UP:
                             if selecting != 0:
                                 selecting -= 1
@@ -547,65 +531,58 @@ async def main():
             clock.tick(60)
             await asyncio.sleep(0)
             screen.fill(BG)
-            font = pygame.font.SysFont(fontname1, FONTSIZE_TOP)
-            text = font.render("最終結果", True, black)
+            
+            text = font_top.render("最終結果", True, black)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(2/18)))
             screen.blit(text, text_rect)
-            text = font.render(winnertxt, True, winnercolor)
+            text = font_top.render(winnertxt, True, winnercolor)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(3/18)))
             screen.blit(text, text_rect)
-            font = pygame.font.SysFont(fontname1, FONTSIZE_DEF)
             for p in range(3):
-                text = font.render(f"{player_names[p]} {player_wins[p]}勝", True, player_color[p])
+                text = font_def.render(f"{player_names[p]} {player_wins[p]}勝", True, player_color[p])
                 text_rect = text.get_rect(center=(WIDTH*(1/6+p/3), HEIGHT*(4/18)))
                 screen.blit(text, text_rect)
                 for i in range(len(cards[p])):
-                    text = font.render(f"{cards[p][i][0]}", True, black)
+                    text = font_def.render(f"{cards[p][i][0]}", True, black)
                     screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                    text = font.render(f"{cards[p][i][1]}", True, black)
+                    text = font_def.render(f"{cards[p][i][1]}", True, black)
                     screen.blit(text, (WIDTH*(11/48+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                    text = font.render(f"{score[p][i]}", True, black)
+                    text = font_def.render(f"{score[p][i]}", True, black)
                     screen.blit(text, (WIDTH*(25/96+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
 
 
-            font = pygame.font.SysFont(fontname1, 15)
-            text = font.render(f"目標スコア:{targetscore}", True, black)
+            
+            text = font_top.render(f"目標スコア:{targetscore}", True, black)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(14/18)))
             screen.blit(text, text_rect)
             
             for p in range(3):
-                text = font.render(f"{player_names[p]}のスコア:{lastscore[p]}点", True, player_color[p])
+                text = font_top.render(f"{player_names[p]}のスコア:{lastscore[p]}点", True, player_color[p])
                 text_rect = text.get_rect(center=(WIDTH*(p/3+1/6), HEIGHT*(15/18)))
                 screen.blit(text, text_rect)
                 if lastscore[p] < targetscore:
-                    text = font.render(f"あと{targetscore-lastscore[p]}点！", True, black)
+                    text = font_def.render(f"あと{targetscore-lastscore[p]}点！", True, black)
                     text_rect = text.get_rect(center=(WIDTH*(p/3+1/6), HEIGHT*(16/18)))
                     screen.blit(text, text_rect)
                 elif lastscore[p] == targetscore:
                     
-                    text = font.render(f"完璧！", True, black)
+                    text = font_def.render(f"完璧！", True, black)
                     text_rect = text.get_rect(center=(WIDTH*(p/3+1/6), HEIGHT*(16/18)))
                     screen.blit(text, text_rect)
                 else:
                     
-                    text = font.render(f"ざこが 出直して来い", True, red)
+                    text = font_def.render(f"ざこが 出直して来い", True, red)
                     text_rect = text.get_rect(center=(WIDTH*(p/3+1/6), HEIGHT*(16/18)))
                     screen.blit(text, text_rect)
-            font = pygame.font.SysFont(fontname1, FONTSIZE_TOP)
-            text = font.render("Enterで次のゲーム準備", True, black)
+            text = font_top.render("Enterで次のゲーム準備", True, black)
             text_rect = text.get_rect(center=(WIDTH*(1/2), HEIGHT*(17/18)))
             screen.blit(text, text_rect)
             pygame.display.update()
             for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
+
 
                 if event.type == KEYDOWN:
 
-                    if event.key == K_ESCAPE:
-                        pygame.quit()
-                        sys.exit()
                     if event.key == K_RETURN:
                         running3 = False
 
@@ -619,4 +596,4 @@ async def main():
 
 if __name__ == "__main__":
     #print(pygame.font.get_fonts())
-    main()
+    asyncio.run(main())
