@@ -540,7 +540,7 @@ async def main():
             screen.blit(text, text_rect)
             
             for p in range(3):
-                text = font_top.render(f"{player_names[p]}のスコア:{lastscore[p]}点", True, player_color[p])
+                text = font_def.render(f"{player_names[p]}のスコア:{lastscore[p]}点", True, player_color[p])
                 text_rect = text.get_rect(center=(WIDTH*(p/3+1/6), HEIGHT*(15/18)))
                 screen.blit(text, text_rect)
                 if lastscore[p] < targetscore:
@@ -579,5 +579,5 @@ async def main():
 
 if __name__ == "__main__":
 
-    print("HPPPPPPPPPPPPPPPPPPPPPPPPP")
+    #print("HPPPPPPPPPPPPPPPPPPPPPPPPP")
     asyncio.run(main())
