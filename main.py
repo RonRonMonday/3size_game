@@ -37,6 +37,7 @@ async def main():
     FONTSIZE_TOP = 30
     FONTSIZE_DEF = 20
     FONT_FILE = "AkazukiPOP.otf"
+    version_txt = "ver1.5"
 
     font_title = pygame.font.Font(FONT_FILE, FONTSIZE_TITLE)
     font_top = pygame.font.Font(FONT_FILE, FONTSIZE_TOP)
@@ -87,6 +88,10 @@ async def main():
             
             #赤(255,0,0)
             screen.fill(BG)
+
+            text1 = font_def.render(version_txt, True, black)
+            text_rect = text1.get_rect(center=(WIDTH*(1/8), HEIGHT*(1/16)))
+            screen.blit(text1, text_rect)
             
             text1 = font_title.render("3サイズブラックジャック", True, black)
             text_rect = text1.get_rect(center=(WIDTH*(1/2), HEIGHT*(1/4)))
@@ -300,11 +305,11 @@ async def main():
                             
                             change_power[player] = 0
                             change_running = False
-        score = [0,0,0]
+        score = [[],[],[]]
         for p in range(3):
             for i in range(len(cards[p])):
                 n = cards[p][i]
-                score.append(data[c_list[n%n_chara]][data[c_list[n%n_chara]][n//n_chara]])
+                score[p].append(data[c_list[n%n_chara]][data[c_list[n%n_chara]][n//n_chara]])
         s = [0,0,0]
         lastscore = []
 
