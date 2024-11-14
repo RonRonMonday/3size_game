@@ -3,6 +3,7 @@ from pygame.locals import *
 import random
 import copy
 import asyncio
+import json
 
 
 def card_use(c_list,yamafuda,using):
@@ -46,197 +47,10 @@ async def main():
     
     chara = []
     data = {}
+
+    with open('config.json',encoding="utf-8") as f:
+        d = json.load(f)
     
-    d = {
-    "players": [
-        "Player1",
-        "Player2",
-        "Player3"
-    ],
-    "colors": [
-        [
-        50,
-        50,
-        200
-        ],
-        [
-        250,
-        50,
-        50
-        ],
-        [
-        250,
-        230,
-        50
-        ]
-    ],
-    "target_score": {
-        "max": 600,
-        "min": 400
-    },
-    "3size_data": {
-        "高坂穂乃果": {
-        "B": 78,
-        "W": 58,
-        "H": 82
-        },
-        "絢瀬絵里": {
-        "B": 88,
-        "W": 60,
-        "H": 84
-        },
-        "南ことり": {
-        "B": 80,
-        "W": 58,
-        "H": 80
-        },
-        "園田海未": {
-        "B": 76,
-        "W": 58,
-        "H": 80
-        },
-        "星空凛": {
-        "B": 75,
-        "W": 59,
-        "H": 80
-        },
-        "西木野真姫": {
-        "B": 78,
-        "W": 56,
-        "H": 83
-        },
-        "東條希": {
-        "B": 90,
-        "W": 60,
-        "H": 82
-        },
-        "小泉花陽": {
-        "B": 82,
-        "W": 60,
-        "H": 83
-        },
-        "矢澤にこ": {
-        "B": 74,
-        "W": 57,
-        "H": 79
-        },
-        "高海千歌": {
-        "B": 82,
-        "W": 59,
-        "H": 83
-        },
-        "桜内梨子": {
-        "B": 80,
-        "W": 58,
-        "H": 82
-        },
-        "松浦果南": {
-        "B": 83,
-        "W": 58,
-        "H": 84
-        },
-        "黒澤ﾀﾞｲﾔ": {
-        "B": 80,
-        "W": 57,
-        "H": 80
-        },
-        "渡辺曜": {
-        "B": 82,
-        "W": 57,
-        "H": 81
-        },
-        "津島善子": {
-        "B": 79,
-        "W": 58,
-        "H": 80
-        },
-        "国木田花丸": {
-        "B": 83,
-        "W": 57,
-        "H": 83
-        },
-        "小原鞠莉": {
-        "B": 87,
-        "W": 60,
-        "H": 84
-        },
-        "黒澤ﾙﾋﾞｨ": {
-        "B": 76,
-        "W": 56,
-        "H": 79
-        },
-        "上原歩夢": {
-        "B": 82,
-        "W": 58,
-        "H": 84
-        },
-        "中須かすみ": {
-        "B": 76,
-        "W": 55,
-        "H": 79
-        },
-        "桜坂しずく": {
-        "B": 80,
-        "W": 58,
-        "H": 83
-        },
-        "朝香果林": {
-        "B": 88,
-        "W": 57,
-        "H": 89
-        },
-        "宮下愛": {
-        "B": 84,
-        "W": 53,
-        "H": 86
-        },
-        "近江彼方": {
-        "B": 85,
-        "W": 60,
-        "H": 86
-        },
-        "優木せつ菜": {
-        "B": 83,
-        "W": 56,
-        "H": 81
-        },
-        "ｴﾏ･ｳﾞｪﾙﾃﾞ": {
-        "B": 92,
-        "W": 61,
-        "H": 88
-        },
-        "天王寺璃奈": {
-        "B": 71,
-        "W": 52,
-        "H": 75
-        },
-        "三船栞子": {
-        "B": 79,
-        "W": 56,
-        "H": 78
-        },
-        "鐘嵐珠": {
-        "B": 87,
-        "W": 55,
-        "H": 82
-        },
-        "ﾐｱ･ﾃｲﾗｰ": {
-        "B": 80,
-        "W": 55,
-        "H": 80
-        },
-        "鹿角聖良": {
-        "B": 85,
-        "W": 59,
-        "H": 84
-        },
-        "鹿角理亞": {
-        "B": 79,
-        "W": 56,
-        "H": 81
-        }
-    }
-    }
 
     target_max = int(d["target_score"]["max"])
     target_min = int(d["target_score"]["min"])
@@ -247,12 +61,16 @@ async def main():
     for key,value in d["3size_data"].items():
         chara.append(key)
         data[key] = value
-        data[key]["which"] = random.choice(["B","W","H"])
+        data[key][0] = "B"
+        data[key][1] = "W"
+        data[key][2] = "H"
             
     c_list = copy.deepcopy(chara)
 
+    n_chara = len(c_list)
+
     using = []
-    yamafuda = list(range(len(c_list))) #山札
+    yamafuda = list(range(n_chara*3)) #山札
 
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("3size_game")
@@ -299,16 +117,16 @@ async def main():
         
 
         cards = []
-        score = []
+        #score = []
         for p in range(3):
             cards.append([])
-            score.append([])
+            #score.append([])
             for i in range(4):
                 (n,yamafuda,using) = card_use(c_list,yamafuda,using)
-                bwh = data[chara[n]]["which"]
+                bwh = data[chara[n%n_chara]][n//n_chara]
                 #print(n)
-                cards[p].append([c_list[n],bwh])
-                score[p].append(data[c_list[n]][bwh])
+                cards[p].append(n)
+                #score[p].append(data[c_list[n%n_chara]][bwh])
         
         targetscore = target_min + random.randrange(target_max-target_min)
 
@@ -356,12 +174,15 @@ async def main():
                 text_rect = text.get_rect(center=(WIDTH*(1/6+p/3), HEIGHT*(4/18)))
                 screen.blit(text, text_rect)
                 for i in range(len(cards[p])):
-                    text = font_def.render(f"{i+1}.{cards[p][i][0]}", True, black)
+                    n = cards[p][i]
+                    #print(f"n={n}")
+                    #print(f"n_chara={n_chara}")
+                    text = font_def.render(f"{i+1}.{c_list[n%n_chara]}", True, black)
                     screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                    text = font_def.render(f"{cards[p][i][1]}", True, black)
+                    text = font_def.render(f"{data[c_list[n%n_chara]][n//n_chara]}", True, black)
                     screen.blit(text, (WIDTH*(11/48+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                     if i<= 1:
-                        text = font_def.render(f"{score[p][i]}", True, black)
+                        text = font_def.render(f"{data[c_list[n%n_chara]][data[c_list[n%n_chara]][n//n_chara]]}", True, black)
                         screen.blit(text, (WIDTH*(25/96+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                 if player_skip[p] == 1:
                     text = font_def.render("追加終了", True, black)
@@ -377,15 +198,16 @@ async def main():
                 if event.type == KEYDOWN:
 
                     if event.key == K_f:
+                        
                         (n,yamafuda,using) = card_use(c_list,yamafuda,using)
-                        bwh = data[chara[n]]["which"]
+                        #bwh = data[chara[n%n_chara]][n//n_chara]
                         #print(n)
-                        cards[player].append([c_list[n],bwh])
-                        score[player].append(data[c_list[n]][bwh])
+                        cards[player].append(n)
+                        #score[p].append(data[c_list[n%n_chara]][bwh])
                         if len(cards[player]) == 10:
                             player_skip[player] = 1
                         player = (player+1)%3
-                    if event.key == K_c:
+                    if event.key == K_c and change_power[player] == 1:
                         change_running = True
                         selecting = 0
 
@@ -425,15 +247,18 @@ async def main():
                     screen.blit(text, text_rect)
 
                     for i in range(len(cards[p])):
+
+
+                        n = cards[p][i]
                         if selecting == i and p == player:
-                            text = font_def.render(f"→{i+1}.{cards[p][i][0]}", True, black)
+                            text = font_def.render(f"→{i+1}.{c_list[n%n_chara]}", True, black)
                         else:
-                            text = font_def.render(f"{i+1}.{cards[p][i][0]}", True, black)
+                            text = font_def.render(f"{i+1}.{c_list[n%n_chara]}", True, black)
                         screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                        text = font_def.render(f"{cards[p][i][1]}", True, black)
+                        text = font_def.render(f"{data[c_list[n%n_chara]][n//n_chara]}", True, black)
                         screen.blit(text, (WIDTH*(11/48+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                         if i<= 1:
-                            text = font_def.render(f"{score[p][i]}", True, black)
+                            text = font_def.render(f"{data[c_list[n%n_chara]][data[c_list[n%n_chara]][n//n_chara]]}", True, black)
                             screen.blit(text, (WIDTH*(25/96+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
                     if player_skip[p] == 1:
                         text = font_def.render("追加終了", True, black)
@@ -458,27 +283,31 @@ async def main():
                         if event.key == K_c:
                             change_running = False
 
-                        if event.key == K_b:
-                            cards[player][selecting][1] = "B"
-                            score[player][selecting] = data[cards[player][selecting][0]][cards[player][selecting][1]]
+                        if event.key == K_b or event.key == K_w or event.key == K_h:
+                            if event.key == K_b:
+                                key = "B"
+                            elif event.key == K_w:
+                                key = "W"
+                            else:
+                                key = "H"
+                            n = cards[player][selecting]
+                            for j in range(3):
+                                if data[c_list[n%n_chara]][j] == key:
+                                    temp = j
+                                    
+                            data[c_list[n%n_chara]][temp] = data[c_list[n%n_chara]][n//n_chara]
+                            data[c_list[n%n_chara]][n//n_chara] = key
+                            
                             change_power[player] = 0
-                            data[cards[player][selecting][0]]["which"] = "B"
                             change_running = False
-                        if event.key == K_w:
-                            cards[player][selecting][1] = "W"
-                            score[player][selecting] = data[cards[player][selecting][0]][cards[player][selecting][1]]
-                            change_power[player] = 0
-                            data[cards[player][selecting][0]]["which"] = "W"
-                            change_running = False
-                        if event.key == K_h:
-                            cards[player][selecting][1] = "H"
-                            score[player][selecting] = data[cards[player][selecting][0]][cards[player][selecting][1]]
-                            change_power[player] = 0
-                            data[cards[player][selecting][0]]["which"] = "H"
-                            change_running = False
-
+        score = [0,0,0]
+        for p in range(3):
+            for i in range(len(cards[p])):
+                n = cards[p][i]
+                score.append(data[c_list[n%n_chara]][data[c_list[n%n_chara]][n//n_chara]])
         s = [0,0,0]
         lastscore = []
+
         for p in range(3):
             lastscore.append(sum(score[p]))
         for p in range(3):
@@ -526,11 +355,13 @@ async def main():
                 text_rect = text.get_rect(center=(WIDTH*(1/6+p/3), HEIGHT*(4/18)))
                 screen.blit(text, text_rect)
                 for i in range(len(cards[p])):
-                    text = font_def.render(f"{cards[p][i][0]}", True, black)
+                    n = cards[p][i]
+                    text = font_def.render(f"{i+1}.{c_list[n%n_chara]}", True, black)
                     screen.blit(text, (WIDTH*(1/24+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                    text = font_def.render(f"{cards[p][i][1]}", True, black)
+                    text = font_def.render(f"{data[c_list[n%n_chara]][n//n_chara]}", True, black)
                     screen.blit(text, (WIDTH*(11/48+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
-                    text = font_def.render(f"{score[p][i]}", True, black)
+
+                    text = font_def.render(f"{data[c_list[n%n_chara]][data[c_list[n%n_chara]][n//n_chara]]}", True, black)
                     screen.blit(text, (WIDTH*(25/96+p/3),HEIGHT*(1/4)+i*FONTSIZE_DEF))
 
 
